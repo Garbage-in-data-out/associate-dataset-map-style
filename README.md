@@ -13,7 +13,7 @@ Sets map style to a dataset with a passed by input id.
 None
 
 ##  How to invoke:
-URL: https://europe-west1-bins-to-owners-332bc.cloudfunctions.net/associateDatasetMapStyle
+URL: https://europe-west1-bins-to-owners-332bc.cloudfunctions.net/associateDatasetMapStyle <br>
 Expects POST request with structure:
 ```
 {
