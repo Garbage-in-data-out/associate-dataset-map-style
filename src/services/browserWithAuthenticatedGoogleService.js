@@ -1,5 +1,9 @@
 import puppeteer from "puppeteer";
 
+function turnXPathToValidSelector(xpath) {
+  return `::-p-xpath(${xpath})`;
+}
+
 async function setUpBrowserAsync() {
   async function setUpAuthenticationFormPartAsync(page, inputSelector, value) {
     // Type into input field
@@ -7,8 +11,13 @@ async function setUpBrowserAsync() {
     await page.type(inputSelector, value);
 
     // Wait and click on first result
-    const nextButtonXPath = "::-p-xpath(//button[.//span[text()='Next']])";
-    await Promise.all([page.waitForNavigation(), page.click(nextButtonXPath)]);
+    const nextButtonSelector = turnXPathToValidSelector(
+      "//button[.//span[text()='Next']]"
+    );
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click(nextButtonSelector),
+    ]);
   }
 
   const browser = await puppeteer.launch({ headless: false });
@@ -34,10 +43,39 @@ async function setUpBrowserAsync() {
     process.env.GOOGLE_PASSWORD
   );
 
-  return browser;
+  return page;
 }
 
 async function associateDatasetMapStyleAsync(page, datasetId) {
+  async function clickButtonWhenVisibleAsync(selector) {
+    await page.waitForSelector(selector, { visible: true });
+    await page.click(selector);
+  }
+
+  const url = `https://console.cloud.google.com/google/maps-apis/datasets/${datasetId}?project=bins-to-owners-332bc`;
+
+  await page.goto(url);
+
+  const previewButtonSelector = turnXPathToValidSelector(
+    "//span[text()='Preview']"
+  );
+  await clickButtonWhenVisibleAsync(previewButtonSelector);
+
+  setTimeout(() => {}, 1000);
+
+  const addMapStyleButtonSelector = turnXPathToValidSelector(
+    "//button[.//span[text()='Add Map Style']]"
+  );
+  await clickButtonWhenVisibleAsync(addMapStyleButtonSelector);
+
+  const mapStyleCardSelector = "map-style-card";
+  await clickButtonWhenVisibleAsync(mapStyleCardSelector);
+
+  const saveButtonSelector = turnXPathToValidSelector(
+    "//button[.//span[text()='Save']]"
+  );
+  await clickButtonWhenVisibleAsync(saveButtonSelector);
+
   return "Done!";
 }
 
