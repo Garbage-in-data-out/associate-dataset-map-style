@@ -1,3 +1,6 @@
-import { associateDatasetMapStyle } from "./services/browserWithAuthenticatedGoogleService.js";
+import {
+  setUpBrowserAsync,
+  associateDatasetMapStyleAsync,
+} from "./services/browserWithAuthenticatedGoogleService.js";
 
-export { associateDatasetMapStyle };
+export { setUpBrowserAsync, associateDatasetMapStyleAsync };
