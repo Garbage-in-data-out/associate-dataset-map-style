@@ -15,7 +15,7 @@ import * as program from "./program.js";
  * @param {Object} res Cloud Function response context.
  */
 functions.http("associateDatasetMapStyle", async (req, res) => {
-  const browser = await program.setUpBrowserAsync();
+  const page = await program.setUpBrowserAsync();
 
   const datasetId = req.body.datasetId;
   if (!datasetId) {
@@ -23,6 +23,6 @@ functions.http("associateDatasetMapStyle", async (req, res) => {
   }
 
   await httpPostAsync(req, res, () =>
-    program.associateDatasetMapStyleAsync(browser, datasetId)
+    program.associateDatasetMapStyleAsync(page, datasetId)
   );
 });

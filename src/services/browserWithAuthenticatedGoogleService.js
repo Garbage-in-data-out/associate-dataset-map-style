@@ -20,16 +20,18 @@ async function setUpBrowserAsync() {
     ]);
   }
 
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: "new" });
 
   const page = await browser.newPage();
   await page.setBypassCSP(true);
-  await page.setViewport({ width: 1080, height: 1024 });
+  await page.setViewport({ width: 1920, height: 1080 });
   await page.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
   );
 
-  await page.goto("https://accounts.google.com/");
+  await page.goto("https://accounts.google.com/", {
+    waitUntil: "networkidle0",
+  });
 
   await setUpAuthenticationFormPartAsync(
     page,
@@ -54,26 +56,22 @@ async function associateDatasetMapStyleAsync(page, datasetId) {
 
   const url = `https://console.cloud.google.com/google/maps-apis/datasets/${datasetId}?project=bins-to-owners-332bc`;
 
-  await page.goto(url);
+  await page.goto(url, { waitUntil: "networkidle0" });
 
   const previewButtonSelector = turnXPathToValidSelector(
     "//span[text()='Preview']"
   );
   await clickButtonWhenVisibleAsync(previewButtonSelector);
 
-  setTimeout(() => {}, 1000);
-
-  const addMapStyleButtonSelector = turnXPathToValidSelector(
-    "//button[.//span[text()='Add Map Style']]"
-  );
+  const addMapStyleButtonSelector =
+    "button[data-test-id='add-associated-styles-button']";
   await clickButtonWhenVisibleAsync(addMapStyleButtonSelector);
 
+  await page.waitForSelector("h1 ::-p-text(All map styles)");
   const mapStyleCardSelector = "map-style-card";
   await clickButtonWhenVisibleAsync(mapStyleCardSelector);
 
-  const saveButtonSelector = turnXPathToValidSelector(
-    "//button[.//span[text()='Save']]"
-  );
+  const saveButtonSelector = "button[data-test-id='submit-associated-styles']";
   await clickButtonWhenVisibleAsync(saveButtonSelector);
 
   return "Done!";
